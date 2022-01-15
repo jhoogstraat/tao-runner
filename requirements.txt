@@ -1,0 +1,5 @@
+datumaro
+nvidia-pyindex
+nvidia-tao
+numpy
+matplotlib

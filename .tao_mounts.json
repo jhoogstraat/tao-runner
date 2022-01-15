@@ -1,0 +1,34 @@
+{
+    "Mounts": [
+        {
+            "source": "~/nvidia-tao/experiments",
+            "destination": "/workspace/experiments"
+        },
+        {
+            "source": "~/nvidia-tao/repositories",
+            "destination": "/workspace/repositories"
+        }
+    ],
+    "Envs": [
+        {
+            "variable": "CUDA_VISIBLE_DEVICES",
+            "value": "0"
+        },
+        {
+
+            "variable": "DALI_DISABLE_NVML",
+            "value": "1"
+        }
+    ],
+    "DockerOptions": {
+        "shm_size": "16G",
+        "ulimits": {
+            "memlock": -1,
+            "stack": 67108864
+        },
+        "user": "1000:1000",
+        "ports": {
+            "8888": 8888
+        }
+    }
+}
