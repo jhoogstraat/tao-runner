@@ -1,8 +1,8 @@
 {
     "Mounts": [
         {
-            "source": "~/nvidia-tao/experiments",
-            "destination": "/workspace/experiments"
+            "source": "~/nvidia-tao/projects",
+            "destination": "/workspace/projects"
         },
         {
             "source": "~/nvidia-tao/repositories",
@@ -27,8 +27,6 @@
             "stack": 67108864
         },
         "user": "1000:1000",
-        "ports": {
-            "8888": 8888
-        }
+        "ports": {}
     }
 }

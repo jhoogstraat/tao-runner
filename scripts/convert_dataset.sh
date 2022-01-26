@@ -21,20 +21,20 @@
 # - kitti_detection (https://openvinotoolkit.github.io/datumaro/docs/formats/kitti/)
 
 if [ "$#" -ne 3 ]; then
-  echo "Usage: $0 EXPERIMENT INPUT_FORMAT OUTPUT_FORMAT" >&2
+  echo "Usage: $0 PROJECT INPUT_FORMAT OUTPUT_FORMAT" >&2
   exit 1
 fi
 
 # Check if experiment dir exists
-if ! [ -d "experiments/$1/data/$2" ]
+if ! [ -d "projects/$1/data/$2" ]
   then
-    echo "experiments/$1/data/$2 not a directory" >&2
+    echo "projects/$1/data/$2 not a directory" >&2
     exit 1
 fi
 
-datum convert -i experiments/$1/data/$2/ \
+datum convert -i projects/$1/data/$2/ \
               -if $2 \
-              -o experiments/$1/data/$3/ \
+              -o projects/$1/data/$3/ \
               -f $3 \
               --overwrite \
               -- --save-images

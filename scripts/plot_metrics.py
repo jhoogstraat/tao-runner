@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Plots the metrics from a TAO log file
-# LOG_DIR = "experiments/neu-det/results_resnet18_fasterrcnn_01/"
-LOG_DIR = "experiments/neu-det/results_resnet50_fasterrcnn_02/"
-# LOG_DIR = "experiments/neu-det/results_vgg16_dssd"
+# LOG_DIR = "projects/neu-det/results_resnet18_fasterrcnn_01/"
+LOG_DIR = "projects/neu-det/results_resnet50_fasterrcnn_02/"
+# LOG_DIR = "projects/neu-det/results_vgg16_dssd"
 
 LOG_FILE = "train.log"
 # LOG_FILE = "eval_concat.log"
