@@ -1,3 +1,5 @@
 .venv/
-experiments/*
-!experiments/example
+projects/
+repositories/
+cv_samples_*
+iva*/
