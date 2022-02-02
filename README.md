@@ -1,5 +1,5 @@
 # What is Tao-Runner
-Tao-Runner is a opinionized way to organize and train machine learning models with NVIDIA TAO. It does all the housekeeping around directory structures and keeping your experiments clean.
+Tao-Runner is a opinionated way to organize and train machine learning models with NVIDIA TAO. It does all the housekeeping around directory structures and keeping your experiments clean.
 
 # Setup
   1. Clone this repository to a suitable directory for your projects and create a 'projects/' dir inside the cloned repo.
@@ -43,16 +43,16 @@ projects/
 # Converting a Dataset
 Use `convert_dataset.sh` to convert between different data formats.
 TAO mostly uses the KITTI format for object detection.  
-After that, you can use 'python scripts/run.py convert -h' to see how to convert a KITTI dataset to TFRecords.
+After that, you can use 'python -m tao-runner convert -h' to see how to convert a KITTI dataset to TFRecords.
 
 # Running a Training
 I recommend using the [samples](https://api.ngc.nvidia.com/v2/resources/nvidia/tao/cv_samples/versions/v1.3.0/zip) from NVIDIA as a starting point.  
-See `python scripts/run.py train -h` for the required arguments.  
+See `python -m tao-runner train -h` for the required arguments.  
 You always provide the project (-p), the task you want to carry out (convert, train or export) and the experiments for which the tasks are executed.
 
 Examples:  
-- `python scripts/run.py -p example_01 convert experiment_01`  
-- `python scripts/run.py -p example_01 train experiment_01 experiment_02`
+- `python -m tao-runner -p example_01 convert experiment_01`  
+- `python -m tao-runner -p example_01 train experiment_01 experiment_02`
 
 # experiments.yml
 This file defines all your different experiments inside of a project.  
