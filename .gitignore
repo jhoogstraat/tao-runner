@@ -1,4 +1,5 @@
 .venv/
+*.pyc
 projects/
 repositories/
 cv_samples_*

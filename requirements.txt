@@ -1,5 +1,8 @@
-datumaro
+# datumaro currently has bug the in resizing function. Using develop branch
+# https://github.com/openvinotoolkit/datumaro/pull/622
+git+https://github.com/openvinotoolkit/datumaro@develop
 nvidia-pyindex
 nvidia-tao
 numpy
 matplotlib
+pyyaml
