@@ -10,10 +10,15 @@ from ..context import ExperimentContext
 
 
 def check_kitti(kitti_dir: Path):
+    assert kitti_dir.exists(), f"The directory {kitti_dir} does not exist"
+
     images_dir = kitti_dir.joinpath("image_2")
     labels_dir = kitti_dir.joinpath("label_2")
     samples = list(images_dir.glob('*.jpg')) + \
         list(images_dir.glob('*.png')) + list(images_dir.glob("*.jpeg"))
+
+    assert len(samples) > 0, f"No samples found in dataset {kitti_dir}"
+
     for sample in samples:
         label_file = labels_dir.joinpath(sample.with_suffix('.txt').name)
         if not label_file.exists():
@@ -33,7 +38,7 @@ def check_kitti(kitti_dir: Path):
                         continue
                     else:
                         print(
-                            f"Removing image and label for sample {label_file.stem}")
+                            f"Sample {label_file.stem} has no labels associated. Removing label and image files...")
                         image_file[0].unlink()
                         label_file.unlink()
 
@@ -51,13 +56,13 @@ def check_kitti(kitti_dir: Path):
 
 def run(context: ExperimentContext, overwrite: bool = False, **kwargs):
     assert context.local_paths.convert_spec_file.is_file(
-    ), f"Converter Spec file does not exist at location '{context.local_paths.convert_spec_file}'"
+    ), f"Converter spec file does not exist at location '{context.local_paths.convert_spec_file}'"
 
     if context.local_paths.data_tfrecords_dir.exists():
         assert overwrite, f"The directory '{context.local_paths.data_tfrecords_dir.name}' already exists at 'data/'. Use --overwrite to replace the existing data."
         rmtree(context.local_paths.data_tfrecords_dir)
-    else:
-        context.local_paths.data_tfrecords_dir.mkdir()
+
+    context.local_paths.data_tfrecords_dir.mkdir()
 
     with open(context.local_paths.convert_spec_file, 'r') as infile, open(context.local_paths.compiled_convert_spec_file, 'w') as outfile:
         spec = infile.read()
@@ -72,7 +77,7 @@ def run(context: ExperimentContext, overwrite: bool = False, **kwargs):
 
     check_kitti(context.local_paths.data_raw_dir)
 
-    print("Converting dataset to TFRecords...")
+    print("Converting dataset to TFRecords...\n")
     completed = subprocess.run(["tao", context.config.head, "dataset_convert",
                                 "-d", context.docker_paths.compiled_convert_spec_file.as_posix(),
                                 "-o", context.docker_paths.data_tfrecords_dir.joinpath("tfrecord").as_posix()], check=False, text=True, capture_output=True)

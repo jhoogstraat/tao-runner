@@ -40,12 +40,13 @@ projects/
  - $dataset_tfrecord: Path to the tfrecord-formatted dataset directory (docker side).
  - $pretrained_model: Path to the pretrained model file (.hdf5 file)
 
-# Converting a Dataset
+# Tasks
+## Converting a Dataset
 Use `convert_dataset.sh` to convert between different data formats.
 TAO mostly uses the KITTI format for object detection.  
-After that, you can use 'python -m tao-runner convert -h' to see how to convert a KITTI dataset to TFRecords.
+After that, you can use `python -m tao-runner convert -h` to see how to convert a KITTI dataset to TFRecords.
 
-# Running a Training
+## Running a Training
 I recommend using the [samples](https://api.ngc.nvidia.com/v2/resources/nvidia/tao/cv_samples/versions/v1.3.0/zip) from NVIDIA as a starting point.  
 See `python -m tao-runner train -h` for the required arguments.  
 You always provide the project (-p), the task you want to carry out (convert, train or export) and the experiments for which the tasks are executed.
@@ -94,3 +95,6 @@ experiments:
     export_model: detectnet_v2_resnet18_epoch_080
     export_type: fp16
 ```
+
+## Exporting a model
+Todo....
