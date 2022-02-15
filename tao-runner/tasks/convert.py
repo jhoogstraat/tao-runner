@@ -14,36 +14,28 @@ def check_kitti(kitti_dir: Path):
 
     images_dir = kitti_dir.joinpath("image_2")
     labels_dir = kitti_dir.joinpath("label_2")
-    samples = list(images_dir.glob('*.jpg')) + \
-        list(images_dir.glob('*.png')) + list(images_dir.glob("*.jpeg"))
+    images = list(
+        images_dir.glob('*.jpg')) + list(images_dir.glob('*.png')) + list(images_dir.glob("*.jpeg"))
+    labels = list(labels_dir.glob('*.txt'))
 
-    assert len(samples) > 0, f"No samples found in dataset {kitti_dir}"
+    assert len(images) > 0, f"No samples found in dataset {kitti_dir}"
 
-    for sample in samples:
-        label_file = labels_dir.joinpath(sample.with_suffix('.txt').name)
+    if len(labels) <= len(images):
+        missing_files = [file.stem for file in labels if file not in images]
+        assert f"Found {len(labels)} label files, but only {len(images)} images. Missing:\n" + \
+            '\n'.join(missing_files)
+
+    print(f"Images: {len(images)}, labels: {len(labels)}")
+
+    for image in images:
+        label_file = labels_dir.joinpath(image.with_suffix('.txt').name)
         if not label_file.exists():
-            with open(label_file, 'w') as j:
-                j.write('')
+            with open(label_file, 'w') as r:
+                r.write('')
                 print(f"Created empty label file {label_file.name}")
         else:
-            with open(label_file, 'r') as j:
-                lines = j.readlines()
-
-                # Check if no labels are associated with this image. Removing image + label in that case.
-                if not lines:
-                    image_file = list(images_dir.glob(label_file.stem + "*"))
-                    if len(image_file) != 1:
-                        print(
-                            f"Found {len(image_file)} matching images to label file {label_file}. Expected 1.")
-                        continue
-                    else:
-                        print(
-                            f"Sample {label_file.stem} has no labels associated. Removing label and image files...")
-                        image_file[0].unlink()
-                        label_file.unlink()
-
-                # Check if each row contains 15 columns. Remove the 16th if necessary.
-                for line in lines:
+            with open(label_file, 'r') as r:
+                for line in r.readlines():
                     row = line.strip().split(" ")
                     if len(row) > 15:
                         print(
@@ -51,7 +43,7 @@ def check_kitti(kitti_dir: Path):
                         new_label = str.join(" ", row[:15])
                         with open(label_file, 'w') as w:
                             w.write(new_label)
-    print(f"Checked labels for {len(samples)} image files. All good.")
+    print(f"Checked labels for {len(images)} images. All good.")
 
 
 def run(context: ExperimentContext, overwrite: bool = False, **kwargs):
