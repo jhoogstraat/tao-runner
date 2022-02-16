@@ -7,6 +7,7 @@ from .parsers.argument_parser import Parser as ArgParser
 from .parsers.project_parser import Parser as ProjParser
 from . import tasks
 
+
 def main() -> int:
     args = ArgParser().parse()
     project = ProjParser().parse(args.project)
@@ -22,7 +23,7 @@ def main() -> int:
     assert args.command in tasks.known_tasks, f"Unknown task '{args.command}'"
     command = tasks.known_tasks[args.command]
 
-    print(f"Running command '{args.command}' on project '{args.project}'")
+    print(f"Running task '{args.command}' on project '{args.project}'")
 
     for experiment in args.experiments:
         print(f"Experiment: {experiment}")
@@ -31,7 +32,7 @@ def main() -> int:
         context = ExperimentContext(
             project=args.project, experiment=experiment, config=experiment_config, tao=tao_config)
         command.run(context, **vars(args))
-        
+
     return 0
 
 

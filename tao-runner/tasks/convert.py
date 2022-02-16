@@ -50,29 +50,30 @@ def run(context: ExperimentContext, overwrite: bool = False, **kwargs):
     assert context.local_paths.convert_spec_file.is_file(
     ), f"Converter spec file does not exist at location '{context.local_paths.convert_spec_file}'"
 
-    if context.local_paths.data_tfrecords_dir.exists():
-        assert overwrite, f"The directory '{context.local_paths.data_tfrecords_dir.name}' already exists at 'data/'. Use --overwrite to replace the existing data."
-        rmtree(context.local_paths.data_tfrecords_dir)
+    # TODO: We currently don't know which subset (full, train, val, ...) is being converted, so we cannot check if the dataset is ok.
+    # check_kitti(dataset)
 
-    context.local_paths.data_tfrecords_dir.mkdir()
+    if context.local_paths.subset_tfrecords_dir.exists():
+        assert overwrite, f"The directory '{context.local_paths.subset_tfrecords_dir.name}' already exists at 'data/'. Use --overwrite to replace the existing data."
+        rmtree(context.local_paths.subset_tfrecords_dir)
+
+    context.local_paths.subset_tfrecords_dir.mkdir()
 
     with open(context.local_paths.convert_spec_file, 'r') as infile, open(context.local_paths.compiled_convert_spec_file, 'w') as outfile:
         spec = infile.read()
         spec = spec.replace("$project", context.project)
         spec = spec.replace(
-            "$dataset_raw", context.docker_paths.data_raw_dir.as_posix())
+            "$dataset", context.docker_paths.dataset_dir.as_posix())
         spec = spec.replace(
-            "$dataset_tfrecord", context.docker_paths.data_tfrecords_dir.as_posix())
+            "$dataset_tfrecord", context.docker_paths.subset_tfrecords_dir.as_posix())
         spec = spec.replace("$pretrained_model",
                             context.docker_paths.pretrained_model_file.as_posix())
         outfile.write(spec)
 
-    check_kitti(context.local_paths.data_raw_dir)
-
     print("Converting dataset to TFRecords...\n")
     completed = subprocess.run(["tao", context.config.head, "dataset_convert",
                                 "-d", context.docker_paths.compiled_convert_spec_file.as_posix(),
-                                "-o", context.docker_paths.data_tfrecords_dir.joinpath("tfrecord").as_posix()], check=False, text=True, capture_output=True)
+                                "-o", context.docker_paths.subset_tfrecords_dir.joinpath("tfrecord").as_posix()], check=False, text=True, capture_output=True)
 
     print("STDOUT:", completed.stdout)
     print("STDERR:", completed.stderr)

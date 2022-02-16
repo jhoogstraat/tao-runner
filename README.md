@@ -18,7 +18,6 @@ projects/
 ├─ example_01/  
 │  ├─ data/  
 │  │  ├─ kitti_detection/  
-│  │  ├─ tfrecords_experiment_01/  
 │  │  ├─ vott_json/  
 │  ├─ models/  
 │  │  ├─ experiment_01/  
@@ -30,30 +29,58 @@ projects/
 ├─ example_02/  
 │  ├─ ...
 
+## Datasets
+Each dataset is referenced by its dir name under data/.  
+A dataset can contain multiple subsets, such as `full`, `train` and `val`.  
+You can name your subsets however you want, as long as you reference them correctly in your tao config (e.g. `$dataset/full` or `$dataset/custom_subset`)
+Most model architectures require just the `full` dataset containing all images.  
+`retinanet` uses two datasets (`train` and `val`) which can be generated via the `split` task from the `full` set.
+
 ## Mounts into the tao container:
  1. experiments/ --> /workspace/experiments
  2. repositories/ --> /workspace/repositories
 
 ## Available overrides for tao config files:
- - $experiment: Name of the experiment (section in experiments.cfg)
- - $dataset_raw: Path to the raw datase as configured in `experiments.yml` (docker side).
- - $dataset_tfrecord: Path to the tfrecord-formatted dataset directory (docker side).
- - $pretrained_model: Path to the pretrained model file (.hdf5 file)
+ - `$experiment`: Name of the experiment (name of the section in experiments.cfg).
+ - `$dataset`: Path to the dataset (most likely in kitti format) as configured in `experiments.yml` (docker side).
+ - `$dataset_tfrecord`: Path to the tfrecord-formatted dataset directory (docker side).
+ - `$pretrained_model`: Path to the pretrained model file (.hdf5 file).
+
 
 # Tasks
-## Converting a Dataset
+## Converting a dataset
 Use `convert_dataset.sh` to convert between different data formats.
 TAO mostly uses the KITTI format for object detection.  
 After that, you can use `python -m tao-runner convert -h` to see how to convert a KITTI dataset to TFRecords.
+This task is idempotent.
+
+Examples:  
+- `python -m tao-runner convert example_01 experiment_01`  
+- `python -m tao-runner convert example_01  experiment_01 experiment_02 --overwrite`
+
+## Splitting a dataset
+Use this task to split the dataset into disjunct `train` and `val` subset.
+You can set the percentage of the `val` subset by setting `--val` to a value between `0.0` and `1.0`.
+This task is idempotent.
+
+Required by:
+- RetinaNet
+
+Examples:  
+- `python -m tao-runner split --subset full --val 0.1 example_01 experiment_01`
+- `python -m tao-runner split --subset custom_subset example_01 experiment_01 experiment_02 --overwrite`
+
 
 ## Running a Training
 I recommend using the [samples](https://api.ngc.nvidia.com/v2/resources/nvidia/tao/cv_samples/versions/v1.3.0/zip) from NVIDIA as a starting point.  
 See `python -m tao-runner train -h` for the required arguments.  
-You always provide the project (-p), the task you want to carry out (convert, train or export) and the experiments for which the tasks are executed.
+You always provide the task you want to carry out (`split`, `convert`, `train` or `export`), the project and the experiments for which the tasks are executed.
+This task is idempotent.
 
 Examples:  
-- `python -m tao-runner -p example_01 convert experiment_01`  
-- `python -m tao-runner -p example_01 train experiment_01 experiment_02`
+- `python -m tao-runner train example_01 experiment_01`  
+- `python -m tao-runner train example_01 experiment_01 experiment_02 --overwrite`
+
 
 # experiments.yml
 This file defines all your different experiments inside of a project.  
@@ -79,8 +106,8 @@ experiments:
     repository: pretrained_object_detection
     # Encription key of the trained model
     model_key: secret_key
-    # Directory of the raw dataset under 'data/' to use. Often the kitti_detection format is used.
-    dataset: kitti_detection/train
+    # Directory of the raw dataset under 'data/' to use. Often the kitti_detection format is required.
+    dataset: kitti_detection
     # Filename of the model to export (.tlt model)
     export_model: dssd_resnet18_epoch_080
     # The data type of the exported model (fp32, fp16, int8)
@@ -91,7 +118,7 @@ experiments:
     backbone: resnet18
     repository: pretrained_detectnet_v2
     model_key: secret_key
-    dataset: kitti_detection_1000x1000/train
+    dataset: kitti_detection_1000x1000
     export_model: detectnet_v2_resnet18_epoch_080
     export_type: fp16
 ```
