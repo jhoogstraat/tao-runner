@@ -65,7 +65,7 @@ def run(context: ExperimentContext, overwrite: bool = False, **kwargs):
         spec = spec.replace(
             "$dataset", context.docker_paths.dataset_dir.as_posix())
         spec = spec.replace(
-            "$dataset_tfrecord", context.docker_paths.subset_tfrecords_dir.as_posix())
+            "$tfrecords", context.docker_paths.subset_tfrecords_dir.as_posix())
         spec = spec.replace("$pretrained_model",
                             context.docker_paths.pretrained_model_file.as_posix())
         outfile.write(spec)

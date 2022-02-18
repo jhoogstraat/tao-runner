@@ -43,8 +43,8 @@ Most model architectures require just the `full` dataset containing all images.
 ## Available overrides for tao config files:
  - `$experiment`: Name of the experiment (name of the section in experiments.cfg).
  - `$dataset`: Path to the dataset (most likely in kitti format) as configured in `experiments.yml` (docker side).
- - `$dataset_tfrecord`: Path to the tfrecord-formatted dataset directory (docker side).
- - `$pretrained_model`: Path to the pretrained model file (.hdf5 file).
+ - `$tfrecords`: Path to the tfrecord-formatted dataset directory (docker side).
+ - `$pretrained_model`: Path to the pretrained model file (.hdf5 file, docker side).
 
 
 # Tasks
